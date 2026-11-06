@@ -1,0 +1,8 @@
+*.d
+*.o
+*.make
+*.json
+*.raw
+SpeedRead/.clangd
+SpeedRead/FileReader
+SpeedRead/FileGenerator

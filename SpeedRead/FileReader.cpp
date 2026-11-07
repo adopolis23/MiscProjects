@@ -1,6 +1,7 @@
 
 
 #include <fcntl.h>
+#include <spanstream>
 #include <string_view>
 #include <unistd.h>
 #include <sys/mman.h>
@@ -47,11 +48,15 @@ auto main(int argc, char** argv) -> int
         return 1;
     }
 
-    auto dataSV = std::string_view(static_cast<const char*>(addr), sb.st_size);
+    //auto dataSV = std::string_view(static_cast<const char*>(addr), sb.st_size);
+
+    std::ispanstream dataStream = std::ispanstream(std::span<char>((char*)addr, sb.st_size));
 
 
 
-    close(file_fd);
+
+    ::munmap(addr, sb.st_size);
+    ::close(file_fd);
 
     return EXIT_SUCCESS;
 }

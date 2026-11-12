@@ -2,12 +2,10 @@
 
 #include <fcntl.h>
 #include <spanstream>
-#include <string_view>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <iostream>
-#include <stdexcept>
 #include <span>
 
 #define EXIT_FAIL 1
@@ -48,9 +46,19 @@ auto main(int argc, char** argv) -> int
         return 1;
     }
 
-    //auto dataSV = std::string_view(static_cast<const char*>(addr), sb.st_size);
-
     std::ispanstream dataStream = std::ispanstream(std::span<char>((char*)addr, sb.st_size));
+
+    auto view = dataStream.span();
+    auto begin = view.begin();
+
+    while (begin != view.end())
+    {
+        const auto semi = std::ranges::find(begin, std::unreachable_sentinel, ':'); 
+
+        std::string_view sensor = { begin, semi };
+
+
+    }
 
 
 

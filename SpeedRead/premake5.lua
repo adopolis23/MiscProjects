@@ -29,5 +29,10 @@ project "FileReader"
         "./FileReader.cpp",
     }
 
+    symbols "On"
+    optimize "Off"
+    buildoptions { "-g" }
+    linkoptions { "-g" }
+
     includedirs {
     }

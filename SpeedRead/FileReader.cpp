@@ -1,5 +1,6 @@
 
 
+#include <charconv>
 #include <fcntl.h>
 #include <spanstream>
 #include <unistd.h>
@@ -57,6 +58,16 @@ auto main(int argc, char** argv) -> int
 
         std::string_view sensor = { begin, semi };
 
+        // Advance the beginning iterator to just after out semicolon
+        begin = semi + 1;
+
+        const auto endl = std::ranges::find(begin, std::unreachable_sentinel, '\n'); 
+
+        std::string_view value = { begin, endl };
+        int val_int;
+        auto [ptr, ec] = std::from_chars(value.data(), value.data() + value.size(), val_int);
+
+        begin = endl + 1;
 
     }
 

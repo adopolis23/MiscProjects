@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <charconv>
+#include <chrono>
+#include <cstdlib>
 #include <fcntl.h>
 #include <fstream>
 #include <limits>
@@ -19,7 +21,8 @@
 
 struct Record
 {
-    int min{}, max{};
+    size_t count{};
+    int min{}, max{}, sum{};
 };
 
 static std::map<int, Record> records;
@@ -34,6 +37,20 @@ auto PrintRecords(std::map<int, Record>& records) -> void
         char letter = static_cast<char>('A' + key);
         printf("Sensor %c - Min: %d Max: %d\n", letter, record.min, record.max);
     }
+}
+
+
+auto TimeExecution(auto&& callable) -> long
+{
+    const auto start = std::chrono::steady_clock::now(); 
+    
+    callable();
+
+    const auto end = std::chrono::steady_clock::now(); 
+
+    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    return duration;
 }
 
 
@@ -72,16 +89,20 @@ auto Method1() -> int
             if (val_int > it->second.max)
                 it->second.max = val_int;
 
+            it->second.sum += val_int;
+
+            it->second.count++;
+
         }
         else
         {
             // Insert new sensor into list
 
-            records[sensor_number] = { val_int, val_int };
+            records[sensor_number] = { 1, val_int, val_int, val_int };
         }
     }
 
-    PrintRecords(records);
+    //PrintRecords(records);
 
     return EXIT_SUCCESS;
 }
@@ -148,18 +169,22 @@ auto Method2() -> int
             if (val_int > it->second.max)
                 it->second.max = val_int;
 
+            it->second.sum += val_int;
+
+            it->second.count++;
+
         }
         else
         {
             // Insert new sensor into list
 
-            records[sensor_val] = { val_int, val_int };
+            records[sensor_val] = { 1, val_int, val_int, val_int };
         }
 
     }
 
 
-    PrintRecords(records);
+    //PrintRecords(records);
 
 
     ::munmap(addr, sb.st_size);
